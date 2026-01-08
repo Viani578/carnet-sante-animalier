@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attestation Vétérinaire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #4a6fa5;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #e8f4fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #4a6fa5;
+            font-size: 30px;
+            color: #4a6fa5;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        
+        .cabinet-info {
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .cabinet-info strong {
+            color: #2c3e50;
+        }
+        
+        .document-title {
+            text-align: center;
+            font-size: 22px;
+            margin: 25px 0;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-left: 4px solid #4a6fa5;
+        }
+        
+        .two-columns {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .form-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .preview-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .form-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4a6fa5;
+        }
+        
+        .checkbox-group {
+            margin: 15px 0;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .checkbox-item input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .signature-area {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .signature-container {
+            display: inline-block;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .signature-canvas-container {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .signature-canvas {
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .signature-controls {
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .signature-controls button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .stamp-controls {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .stamp-upload {
+            margin-bottom: 15px;
+        }
+        
+        .stamp-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .stamp-small {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #a52a2a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 10px;
+            color: #a52a2a;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.2;
+            padding: 5px;
+            background-color: white;
+            margin-bottom: 10px;
+        }
+        
+        .stamp-upload-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #4a6fa5;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .stamp-upload-btn:hover {
+            background-color: #3a5a80;
+        }
+        
+        #stamp-file {
+            display: none;
+        }
+        
+        .attestation-preview {
+            padding: 25px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            height: fit-content;
+            min-height: 800px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            max-height: 800px;
+        }
+        
+        .preview-content {
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .preview-content p {
+            margin-bottom: 15px;
+        }
+        
+        .preview-content ul {
+            margin: 10px 0 20px 30px;
+        }
+        
+        .signature-footer {
+            margin-top: 40px;
+            position: relative;
+        }
+        
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 60px;
+        }
+        
+        .signature-left {
+            flex: 1;
+            text-align: left;
+            padding-right: 20px;
+        }
+        
+        .signature-right {
+            flex: 1;
+            text-align: right;
+            padding-left: 20px;
+        }
+        
+        .stamp-center {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            flex: 2;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .btn-print {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .btn-print:hover {
+            background-color: #138496;
+        }
+        
+        .info-note {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-left: 3px solid #4a6fa5;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .attestation-item {
+            margin: 12px 0 12px 20px;
+        }
+        
+        @media print {
+            @page {
+                margin: 20mm;
+            }
+            
+            body {
+                background-color: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            
+            body * {
+                visibility: hidden;
+            }
+            
+            .attestation-preview,
+            .attestation-preview * {
+                visibility: visible;
+            }
+            
+            .attestation-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                border: none;
+                box-shadow: none;
+            }
+            
+            .container,
+            .form-column,
+            .buttons,
+            .info-note,
+            .stamp-controls,
+            .signature-controls,
+            .header h2,
+            .two-columns > .preview-column:first-child {
+                display: none !important;
+            }
+            
+            .two-columns {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .two-columns {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .signature-row {
+                flex-direction: column;
+                gap: 40px;
+            }
+            
+            .signature-left,
+            .signature-right {
+                text-align: center;
+                padding: 0;
+            }
+            
+            .stamp-center {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                margin-top: 40px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête simplifié -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo" id="logo-click">
+                    <span>🐾</span>
+                </div>
+            </div>
+            <h1>CABINET VÉTÉRINAIRE</h1>
+            <div class="cabinet-info">
+                <strong>Dr. <span id="vet-name-display">[Nom du vétérinaire]</span></strong><br>
+                <span id="vet-address-display">[Adresse complète]</span><br>
+                Téléphone : <span id="vet-phone-display">[Numéro]</span> | 
+                Email : <span id="vet-email-display">[Adresse email]</span>
+            </div>
+        </div>
+        
+        <!-- Interface à deux colonnes -->
+        <div class="two-columns">
+            <!-- Colonne gauche : Formulaire -->
+            <div class="form-column">
+                <form id="attestation-form" action="/attestation/generer" method="POST" enctype="multipart/form-data">
+                    <div class="form-section">
+                        <h3 class="section-title">Informations du vétérinaire</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vet-fullname">Nom et prénom du vétérinaire *</label>
+                                <input type="text" id="vet-fullname" name="vet-fullname" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vet-registration">Numéro d'inscription à l'Ordre *</label>
+                                <input type="text" id="vet-registration" name="vet-registration" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vet-address">Adresse du cabinet *</label>
+                                <input type="text" id="vet-address" name="vet-address" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vet-phone">Téléphone *</label>
+                                <input type="text" id="vet-phone" name="vet-phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vet-email">Email *</label>
+                                <input type="email" id="vet-email" name="vet-email" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">Informations de l'animal</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="animal-name">Nom de l'animal *</label>
+                                <input type="text" id="animal-name" name="animal-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="animal-species">Espèce *</label>
+                                <select id="animal-species" name="animal-species" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="Chien">Chien</option>
+                                    <option value="Chat">Chat</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="animal-breed">Race</label>
+                                <input type="text" id="animal-breed" name="animal-breed">
+                            </div>
+                            <div class="form-group">
+                                <label for="animal-gender">Sexe *</label>
+                                <select id="animal-gender" name="animal-gender" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="Mâle">Mâle</option>
+                                    <option value="Femelle">Femelle</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="animal-couleur">Couleur</label>
+                                <input type="text" id="animal-couleur" name="animal-couleur" placeholder="Ex: 3 mois">
+                            </div>
+                            <div class="form-group">
+                                <label for="animal-puce">Pucé *</label>
+                                <select id="animal-puce" name="animal-puce" required>
+                                    <option value="">Sélectionner</option>
+                                    <option value="Oui">Oui</option>
+                                    <option value="Non">Non</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="owner-name">Propriétaire de l'animal *</label>
+                                <input type="text" id="owner-name" name="owner-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="animal-id">Identification (puce/tatouage) *</label>
+                                <input type="text" id="animal-id" name="animal-id" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">Attestations</h3>
+                        <div class="checkbox-group">
+                            <p>Après examen clinique, j'atteste que l'animal est :</p>
+                            
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="attestation-health" name="attestation-health" checked>
+                                <label for="attestation-health">En bonne santé générale</label>
+                            </div>
+                            
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="attestation-vaccination" name="attestation-vaccination" checked>
+                                <label for="attestation-vaccination">À jour de ses vaccinations obligatoires</label>
+                            </div>
+                            
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="attestation-disease" name="attestation-disease" checked>
+                                <label for="attestation-disease">Ne présente aucun signe de maladie contagieuse au moment de l'examen</label>
+                            </div>
+                            
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="attestation-transport" name="attestation-transport" checked>
+                                <label for="attestation-transport">Apte au transport auquel il est destiné</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">Lieu et date</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">Ville où est établie l'attestation *</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="date">Date de l'attestation *</label>
+                                <input type="date" id="date" name="date" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zone de signature numérique -->
+                    <div class="form-section">
+                        <h3 class="section-title">Signature numérique</h3>
+                        <div class="signature-area">
+                            <div class="signature-canvas-container">
+                                <canvas id="signature-canvas" class="signature-canvas" width="400" height="150"></canvas>
+                            </div>
+                            <div class="signature-controls">
+                                <button type="button" id="clear-signature">Effacer</button>
+                                <button type="button" id="save-signature">Enregistrer signature</button>
+                            </div>
+                        </div>
+                        <!-- Champ caché pour la signature -->
+                        <input type="hidden" id="signature-data" name="signature-data">
+                    </div>
+                    
+                    <!-- Téléchargement du cachet -->
+                    <div class="stamp-controls">
+                        <h3 class="section-title">Cachet du cabinet</h3>
+                        <div class="stamp-upload">
+                            <p>Téléchargez une image de votre cachet (format PNG ou JPG, taille recommandée: 200x200px):</p>
+                            <input type="file" id="stamp-file" name="stamp-file" accept="image/png, image/jpeg, image/jpg" style="display: none;">
+                            <label for="stamp-file" class="stamp-upload-btn">Choisir un fichier</label>
+                            <div class="stamp-preview">
+                                <div class="stamp-small" id="stamp-preview-small">
+                                    <div>Dr. [Nom]</div>
+                                    <div>[Adresse]</div>
+                                    <div>N°[Inscription]</div>
+                                </div>
+                                <p>Prévisualisation du cachet (sera placé au centre entre la signature et la date)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton de soumission dans le formulaire -->
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button type="submit" class="btn btn-success" style="width: 100%; padding: 15px; font-size: 18px;">
+                            Télécharger l'attestation au format PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Colonne droite : Prévisualisation -->
+            <div class="preview-column">
+                <h2 class="section-title" style="text-align: center; margin-bottom: 15px;">Prévisualisation</h2>
+                <div class="attestation-preview" id="attestation-preview">
+                    <!-- Contenu généré dynamiquement -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Boutons d'action -->
+        <div class="buttons">
+            <button type="button" class="btn btn-secondary" id="reset-btn">Effacer le formulaire</button>
+            <button type="button" class="btn btn-print" id="print-btn">Imprimer l'attestation</button>
+        </div>
+        
+        <!-- Note informative -->
+        <div class="info-note">
+            <p><strong>Instructions :</strong> Remplissez tous les champs obligatoires (*). Signez dans la zone de signature ci-dessus. Téléchargez votre cachet si vous en avez un. La prévisualisation se met à jour automatiquement. Cliquez sur "Télécharger l'attestation au format PDF" pour générer et télécharger le document officiel.</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Éléments du formulaire
+            const form = document.getElementById('attestation-form');
+            const resetBtn = document.getElementById('reset-btn');
+            const printBtn = document.getElementById('print-btn');
+            const previewContainer = document.getElementById('attestation-preview');
+            
+            // Éléments de signature
+            const signatureCanvas = document.getElementById('signature-canvas');
+            const clearSignatureBtn = document.getElementById('clear-signature');
+            const saveSignatureBtn = document.getElementById('save-signature');
+            const signatureDataInput = document.getElementById('signature-data');
+            const ctx = signatureCanvas.getContext('2d');
+            
+            // Variables pour la signature
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            let signatureData = null;
+            
+            // Élément pour le cachet
+            const stampFileInput = document.getElementById('stamp-file');
+            const stampPreviewSmall = document.getElementById('stamp-preview-small');
+            let stampImage = null;
+            
+            // Initialiser le canvas de signature
+            function initSignatureCanvas() {
+                // Réinitialiser le canvas
+                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+                
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                // Événements pour dessiner
+                signatureCanvas.addEventListener('mousedown', startDrawing);
+                signatureCanvas.addEventListener('mousemove', draw);
+                signatureCanvas.addEventListener('mouseup', stopDrawing);
+                signatureCanvas.addEventListener('mouseout', stopDrawing);
+                
+                // Pour les appareils tactiles
+                signatureCanvas.addEventListener('touchstart', handleTouchStart);
+                signatureCanvas.addEventListener('touchmove', handleTouchMove);
+                signatureCanvas.addEventListener('touchend', stopDrawing);
+            }
+            
+            // Gestion de la signature - souris
+            function startDrawing(e) {
+                isDrawing = true;
+                [lastX, lastY] = getCoordinates(e);
+            }
+            
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                
+                const [x, y] = getCoordinates(e);
+                
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                
+                [lastX, lastY] = [x, y];
+            }
+            
+            function stopDrawing() {
+                isDrawing = false;
+            }
+            
+            // Gestion de la signature - tactile
+            function handleTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousedown', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                signatureCanvas.dispatchEvent(mouseEvent);
+            }
+            
+            function handleTouchMove(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                signatureCanvas.dispatchEvent(mouseEvent);
+            }
+            
+            // Obtenir les coordonnées
+            function getCoordinates(e) {
+                const rect = signatureCanvas.getBoundingClientRect();
+                let x, y;
+                
+                if (e.type.includes('mouse')) {
+                    x = e.clientX - rect.left;
+                    y = e.clientY - rect.top;
+                } else {
+                    x = e.touches[0].clientX - rect.left;
+                    y = e.touches[0].clientY - rect.top;
+                }
+                
+                return [x, y];
+            }
+            
+            // Effacer la signature
+            clearSignatureBtn.addEventListener('click', function() {
+                initSignatureCanvas();
+                signatureData = null;
+                signatureDataInput.value = '';
+                updatePreview();
+            });
+            
+            // Enregistrer la signature
+            saveSignatureBtn.addEventListener('click', function() {
+                signatureData = signatureCanvas.toDataURL('image/png');
+                signatureDataInput.value = signatureData;
+                alert('Signature enregistrée avec succès!');
+                updatePreview();
+            });
+            
+            // Gestion du téléchargement du cachet
+            stampFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        stampImage = new Image();
+                        stampImage.src = event.target.result;
+                        stampImage.onload = function() {
+                            // Mettre à jour la prévisualisation du cachet
+                            stampPreviewSmall.innerHTML = '';
+                            const img = document.createElement('img');
+                            img.src = stampImage.src;
+                            img.style.width = '100%';
+                            img.style.height = '100%';
+                            img.style.borderRadius = '50%';
+                            stampPreviewSmall.appendChild(img);
+                            updatePreview();
+                        };
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Clic sur le logo pour télécharger un cachet
+            document.getElementById('logo-click').addEventListener('click', function() {
+                stampFileInput.click();
+            });
+            
+            // Fonction pour formater la date en français
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+                return date.toLocaleDateString('fr-FR', options);
+            }
+            
+            // Fonction pour générer la prévisualisation
+            function generatePreview() {
+                // Récupérer les valeurs du formulaire
+                const vetFullname = document.getElementById('vet-fullname').value || '[Nom et prénom]';
+                const vetRegistration = document.getElementById('vet-registration').value || '[Numéro d\'inscription]';
+                const animalName = document.getElementById('animal-name').value || '[Nom]';
+                const animalSpecies = document.getElementById('animal-species').value || '[Chien / Chat / Autre]';
+                const animalBreed = document.getElementById('animal-breed').value || '[Race]';
+                const animalGender = document.getElementById('animal-gender').value || '[Mâle/Femelle]';
+                const animalPuce = document.getElementById('animal-puce').value || '[Oui/Non]';
+                const animalCouleur = document.getElementById('animal-couleur').value || '[Couleur]';
+                const ownerName = document.getElementById('owner-name').value || '[Nom et prénom du propriétaire]';
+                const animalId = document.getElementById('animal-id').value || '[Numéro de puce électronique ou tatouage]';
+                const city = document.getElementById('city').value || '[Ville]';
+                const date = document.getElementById('date').value;
+                
+                // Vérifier les attestations
+                const healthChecked = document.getElementById('attestation-health').checked;
+                const vaccinationChecked = document.getElementById('attestation-vaccination').checked;
+                const diseaseChecked = document.getElementById('attestation-disease').checked;
+                const transportChecked = document.getElementById('attestation-transport').checked;
+                
+                // Mettre à jour l'en-tête
+                document.getElementById('vet-name-display').textContent = vetFullname.split(' ').pop() || '[Nom du vétérinaire]';
+                document.getElementById('vet-address-display').textContent = document.getElementById('vet-address').value || '[Adresse complète]';
+                document.getElementById('vet-phone-display').textContent = document.getElementById('vet-phone').value || '[Numéro]';
+                document.getElementById('vet-email-display').textContent = document.getElementById('vet-email').value || '[Adresse email]';
+                
+                // Générer le contenu de la prévisualisation
+                let previewHTML = `
+                    <div class="preview-content">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <h2 style="font-size: 22px; margin-bottom: 20px; color: #2c3e50;">ATTESTATION VÉTÉRINAIRE</h2>
+                        </div>
+                        
+                        <p>Je soussigné(e), Dr. <strong>${vetFullname}</strong>, vétérinaire inscrit(e) à l'Ordre National des Vétérinaires sous le numéro <strong>${vetRegistration}</strong>, certifie avoir examiné ce jour l'animal ci-après :</p>
+                        
+                        <div style="margin: 20px 0 20px 30px;">
+                            <div class="attestation-item"><strong>Nom de l'animal :</strong> ${animalName}</div>
+                            <div class="attestation-item"><strong>Espèce :</strong> ${animalSpecies}</div>
+                            <div class="attestation-item"><strong>Race :</strong> ${animalBreed}</div>
+                            <div class="attestation-item"><strong>Sexe :</strong> ${animalGender}</div>
+                            <div class="attestation-item"><strong>Couleur :</strong> ${animalCouleur}</div>
+                            <div class="attestation-item"><strong>Pucé :</strong> ${animalPuce}</div>
+                            <div class="attestation-item"><strong>Propriétaire de l'animal :</strong> ${ownerName}</div>
+                            <div class="attestation-item"><strong>Identification :</strong> ${animalId}</div>
+                        </div>
+                        
+                        <p>Après examen clinique, j'atteste que l'animal est :</p>
+                        <ul style="margin: 10px 0 20px 40px;">
+                            <li style="${healthChecked ? '' : 'text-decoration: line-through; color: #999;'}">En bonne santé générale</li>
+                            <li style="${vaccinationChecked ? '' : 'text-decoration: line-through; color: #999;'}">À jour de ses vaccinations obligatoires</li>
+                            <li style="${diseaseChecked ? '' : 'text-decoration: line-through; color: #999;'}">Ne présente aucun signe de maladie contagieuse au moment de l'examen</li>
+                            <li style="${transportChecked ? '' : 'text-decoration: line-through; color: #999;'}">Apte au transport auquel il est destiné</li>
+                        </ul>
+                        
+                        <p>Fait pour servir et valoir ce que de droit.</p>
+                        
+                        <div class="signature-footer">
+                            <div class="signature-row">
+                                <!-- DATE À GAUCHE -->
+                                <div class="signature-left">
+                                    <div style="margin-top: 40px;">
+                                        <div style="font-weight: bold; margin-bottom: 15px;">
+                                            Fait à <strong>${city}</strong>, le <strong>${formatDate(date) || '[Date]'}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- SIGNATURE À DROITE -->
+                                <div class="signature-right">
+                                    <div style="margin-top: 40px; text-align: right;">
+                                        <div style="font-style: italic; color: #666;">
+                                            Signature du vétérinaire
+                                        </div>
+                                        ${signatureData ? `<img src="${signatureData}" style="max-width: 200px; max-height: 80px; display: block; margin: 0 auto 10px;" alt="Signature" />` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            ${stampImage ? `
+                                <div class="stamp-center">
+                                    <img src="${stampImage.src}" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid #a52a2a;" alt="Cachet" />
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                previewContainer.innerHTML = previewHTML;
+                return previewContainer;
+            }
+            
+            // Fonction pour mettre à jour la prévisualisation en temps réel
+            function updatePreview() {
+                generatePreview();
+            }
+            
+            // Événement pour réinitialiser le formulaire
+            resetBtn.addEventListener('click', function() {
+                if (confirm('Voulez-vous vraiment effacer tous les champs du formulaire?')) {
+                    form.reset();
+                    initSignatureCanvas();
+                    signatureData = null;
+                    signatureDataInput.value = '';
+                    stampImage = null;
+                    stampFileInput.value = '';
+                    stampPreviewSmall.innerHTML = `
+                        <div>Dr. [Nom]</div>
+                        <div>[Adresse]</div>
+                        <div>N°[Inscription]</div>
+                    `;
+                    
+                    // Réinitialiser l'en-tête
+                    document.getElementById('vet-name-display').textContent = '[Nom du vétérinaire]';
+                    document.getElementById('vet-address-display').textContent = '[Adresse complète]';
+                    document.getElementById('vet-phone-display').textContent = '[Numéro]';
+                    document.getElementById('vet-email-display').textContent = '[Adresse email]';
+                    
+                    // Réinitialiser la prévisualisation
+                    previewContainer.innerHTML = '<p style="text-align: center; color: #666; margin-top: 50px;">La prévisualisation apparaîtra ici au fur et à mesure de la saisie</p>';
+                    
+                    // Pré-remplir la date d'aujourd'hui
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('date').value = today;
+                    
+                    // Déclencher la première mise à jour
+                    setTimeout(updatePreview, 100);
+                }
+            });
+            
+            // Événement pour imprimer
+            printBtn.addEventListener('click', function() {
+                // Vérifier que l'attestation a été générée
+                const vetName = document.getElementById('vet-fullname').value;
+                if (!vetName || vetName === '[Nom et prénom]') {
+                    alert('Veuillez d\'abord remplir les informations avant d\'imprimer.');
+                    return;
+                }
+                
+                // Mettre à jour la prévisualisation
+                updatePreview();
+                
+                // Attendre un peu pour que le DOM se mette à jour
+                setTimeout(() => {
+                    window.print();
+                }, 500);
+            });
+            
+            // Validation du formulaire avant soumission
+            form.addEventListener('submit', function(e) {
+                // Vérifier les champs obligatoires
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.style.borderColor = '#dc3545';
+                        isValid = false;
+                    } else {
+                        field.style.borderColor = '#ddd';
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Veuillez remplir tous les champs obligatoires (*)');
+                    return false;
+                }
+                
+                // Vérifier la signature
+                if (!signatureDataInput.value) {
+                    e.preventDefault();
+                    if (!confirm('Vous n\'avez pas enregistré de signature. Souhaitez-vous continuer sans signature?')) {
+                        return false;
+                    }
+                }
+                
+                // Afficher un message de chargement
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Génération du PDF en cours...';
+                
+                // Réactiver le bouton après 5 secondes (au cas où)
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }, 5000);
+                
+                return true;
+            });
+            
+            // Écouteurs d'événements pour la mise à jour en temps réel
+            const updateFields = [
+                'vet-fullname', 'vet-registration', 'vet-address', 'vet-phone', 'vet-email',
+                'animal-name', 'animal-species', 'animal-breed', 'animal-gender', 
+                'animal-age', 'animal-birthdate', 'owner-name', 'animal-id',
+                'city', 'date'
+            ];
+            
+            updateFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', updatePreview);
+                    field.addEventListener('change', updatePreview);
+                }
+            });
+            
+            // Écouteurs pour les checkbox
+            const checkboxes = ['attestation-health', 'attestation-vaccination', 'attestation-disease', 'attestation-transport'];
+            checkboxes.forEach(checkboxId => {
+                const checkbox = document.getElementById(checkboxId);
+                if (checkbox) {
+                    checkbox.addEventListener('change', updatePreview);
+                }
+            });
+            
+            // Pré-remplir la date d'aujourd'hui
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // Initialiser le canvas de signature
+            initSignatureCanvas();
+            
+            // Message initial dans la prévisualisation
+            previewContainer.innerHTML = '<p style="text-align: center; color: #666; margin-top: 50px;">La prévisualisation apparaîtra ici au fur et à mesure de la saisie</p>';
+            
+            // Déclencher la première mise à jour
+            setTimeout(updatePreview, 100);
+        });
+    </script>
+</body>
+</html>

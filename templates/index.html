@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnet de Santé Animal - Professionnel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #0d6efd;
+            transition: transform 0.3s;
+        }
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h3 i {
+            color: #0d6efd;
+        }
+
+        /* Styles pour la zone de signature - CORRIGÉ */
+        .signature-container {
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            position: relative;
+        }
+        
+        .signature-wrapper {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        
+        #signature-pad {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            background: white;
+            cursor: crosshair;
+            touch-action: none;
+            display: block;
+            position: relative;
+            z-index: 2; /* Important : au-dessus du placeholder */
+        }
+        
+        .signature-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-style: italic;
+            pointer-events: none; /* Important : ne bloque pas les clics */
+            background: white;
+            z-index: 1; /* Important : en dessous du canvas */
+            border-radius: 5px;
+            transition: opacity 0.3s ease; /* Animation douce */
+        }
+        
+        .signature-placeholder.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .signature-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .signature-preview {
+            margin-top: 15px;
+            text-align: center;
+            padding: 10px;
+            border: 1px dashed #6c757d;
+            border-radius: 5px;
+            background: white;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .signature-preview img {
+            max-width: 100%;
+            max-height: 80px;
+            border-radius: 3px;
+        }
+        
+        .signature-status {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .signature-status.signed {
+            color: #198754;
+        }
+        
+        .signature-status.unsigned {
+            color: #dc3545;
+        }
+
+        .vaccination-row, .antiparasitaire-row {
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+        
+        .btn-remove {
+            margin-top: 32px;
+            transition: all 0.3s;
+        }
+        
+        .stamp-preview {
+            border: 2px dashed #6c757d;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            background: #f8f9fa;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-badge {
+            background: #0d6efd;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .btn-signature {
+            min-width: 120px;
+            padding: 8px 15px;
+        }
+        
+        .alert-custom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, #198754 0%, #157347 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(25, 135, 84, 0.3);
+        }
+        
+        .upload-area {
+            border: 2px dashed #0d6efd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        /* Instructions pour la signature */
+        .signature-instructions {
+            background: #e7f8ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            border-left: 4px solid #0d6efd;
+        }
+        
+        .signature-instructions h6 {
+            color: #0d6efd;
+            margin-bottom: 8px;
+        }
+        
+        .signature-instructions ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+        
+        .signature-instructions li {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        /* Mode tactile amélioré */
+        @media (max-width: 768px) {
+            .signature-wrapper {
+                height: 180px;
+            }
+            
+            .signature-actions {
+                flex-direction: column;
+            }
+            
+            .btn-signature {
+                width: 100%;
+            }
+        }
+        
+        /* État hover pour les boutons de signature */
+        .btn-signature:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Indicateur de dessin actif */
+        .drawing-active {
+            border-color: #0d6efd !important;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="card-animal mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; text-align: center;">
+            <h2><i class="fas fa-paw"></i> CARNET DE SANTÉ ANIMAL PROFESSIONNEL</h2>
+            <p class="mb-0">Gestion complète de la santé de votre animal avec attestation vétérinaire</p>
+        </div>
+
+        <form action="/save" method="POST" enctype="multipart/form-data" id="animalForm">
+            
+            <!-- Sections existantes... -->
+            <!-- Section Identité de l'animal -->
+            <div class="form-section">
+                <h3><i class="fas fa-paw"></i> Identité de l'animal <span class="section-badge">OBLIGATOIRE</span></h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label required">Nom</label>
+                        <input type="text" name="name" class="form-control" required placeholder="Ex: Rex">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label required">Espèce</label>
+                        <input type="text" name="species" class="form-control" required placeholder="Ex: Chien">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Race</label>
+                        <input type="text" name="breed" class="form-control" placeholder="Ex: Labrador">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Âge</label>
+                        <input type="text" name="age" class="form-control" placeholder="Ex: 2 ans">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Sexe</label>
+                        <select name="sex" class="form-select">
+                            <option value="Male">Mâle</option>
+                            <option value="Femelle">Femelle</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Stérilisé(e)</label>
+                        <select name="sterilise" class="form-select">
+                            <option value="Non">Non</option>
+                            <option value="Oui">Oui</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Poids (kg)</label>
+                        <input type="number" step="0.1" name="poids" class="form-control" placeholder="Ex: 15.5">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Numéro d'identification</label>
+                        <input type="text" name="identification" class="form-control" placeholder="Puce ou tatouage">
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label">Photo de l'animal</label>
+                    <div class="upload-area" onclick="document.getElementById('photo').click()">
+                        <i class="fas fa-camera"></i>
+                        <p>Cliquez pour télécharger une photo<br>
+                        <small>Formats acceptés: JPG, PNG (max 5MB)</small></p>
+                        <input type="file" id="photo" name="photo" class="d-none" accept="image/*" onchange="previewPhoto(event)">
+                    </div>
+                    <div id="photo-preview" class="mt-3 text-center" style="display:none;">
+                        <img id="preview-img" src="#" alt="Preview" style="max-width: 200px; border-radius: 10px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Santé -->
+            <div class="form-section">
+                <h3><i class="fas fa-heartbeat"></i> Informations de santé</h3>
+                <div class="mb-3">
+                    <label class="form-label">Allergies connues</label>
+                    <textarea name="allergies" class="form-control" rows="2" placeholder="Listez les allergies connues..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Antécédents médicaux</label>
+                    <textarea name="antecedents" class="form-control" rows="3" placeholder="Antécédents, maladies, opérations..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Traitement en cours</label>
+                    <textarea name="traitement" class="form-control" rows="2" placeholder="Médicaments actuels..."></textarea>
+                </div>
+            </div>
+
+            <!-- Section Vaccinations -->
+            <div class="form-section">
+                <h3><i class="fas fa-syringe"></i> Carnet de vaccinations</h3>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Renseignez ici tous les vaccins administrés à votre animal
+                </div>
+                <div id="vaccinations-container">
+                    <div class="vaccination-row">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Type de vaccin</label>
+                                <input type="text" name="vaccins[0][type]" class="form-control" placeholder="Ex: Rage" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Date</label>
+                                <input type="date" name="vaccins[0][date]" class="form-control" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Rappel</label>
+                                <input type="date" name="vaccins[0][rappel]" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Lot n°</label>
+                                <input type="text" name="vaccins[0][lot]" class="form-control" placeholder="Numéro de lot">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-danger btn-remove form-control" onclick="removeVaccination(this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary mt-2" onclick="addVaccination()">
+                    <i class="fas fa-plus"></i> Ajouter une vaccination
+                </button>
+            </div>
+
+            <!-- Section Antiparasitaires -->
+            <div class="form-section">
+                <h3><i class="fas fa-bug"></i> Traitements antiparasitaires</h3>
+                <div id="antiparasitaires-container">
+                    <div class="antiparasitaire-row">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Type</label>
+                                <select name="antiparasitaires[0][type]" class="form-select" required>
+                                    <option value="Vermifuge">Vermifuge</option>
+                                    <option value="Anti-puces">Anti-puces</option>
+                                    <option value="Anti-tiques">Anti-tiques</option>
+                                    <option value="Multiples">Multiples</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" name="antiparasitaires[0][date]" class="form-control" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Produit</label>
+                                <input type="text" name="antiparasitaires[0][produit]" class="form-control" placeholder="Ex: Frontline" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Prochaine date</label>
+                                <input type="date" name="antiparasitaires[0][prochaine_date]" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary mt-2" onclick="addAntiparasitaire()">
+                    <i class="fas fa-plus"></i> Ajouter un traitement
+                </button>
+            </div>
+
+            <!-- Section Attestation et Cachet -->
+            <div class="form-section">
+                <h3><i class="fas fa-stethoscope"></i> Attestation vétérinaire <span class="section-badge">PROFESSIONNEL</span></h3>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required">Date de l'examen</label>
+                            <input type="date" name="attestation_date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Nom du vétérinaire</label>
+                            <input type="text" name="attestation_veterinaire" class="form-control" required placeholder="Dr. Dupont">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Numéro d'Ordre</label>
+                            <input type="text" name="attestation_ordre" class="form-control" placeholder="N° d'inscription à l'Ordre">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required">Validité de l'attestation</label>
+                            <select name="attestation_validite" class="form-select" required>
+                                <option value="1 mois">1 mois</option>
+                                <option value="3 mois">3 mois</option>
+                                <option value="6 mois">6 mois</option>
+                                <option value="1 an" selected>1 an</option>
+                                <option value="Permanent">Permanent</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Observations médicales</label>
+                            <textarea name="attestation_observations" class="form-control" rows="3" placeholder="État général, recommandations..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cachet et Signature -->
+                <div class="row mt-4">
+                    <!-- Cachet vétérinaire -->
+                    <div class="col-md-6">
+                        <label class="form-label">Cachet vétérinaire (image)</label>
+                        <div class="upload-area" onclick="document.getElementById('cachet').click()">
+                            <i class="fas fa-stamp"></i>
+                            <p>Cliquez pour uploader le cachet<br>
+                            <small>PNG avec fond transparent recommandé</small></p>
+                            <input type="file" id="cachet" name="cachet" class="d-none" accept="image/*" onchange="previewStamp(event)">
+                        </div>
+                        <div id="stamp-preview" class="stamp-preview">
+                            <p class="mb-0 text-muted">Aucun cachet téléchargé</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Signature vétérinaire -->
+                    <div class="col-md-6">
+                        <div class="signature-container">
+                            <div class="signature-header d-flex justify-content-between align-items-center mb-3">
+                                <label class="form-label mb-0 required">Signature vétérinaire</label>
+                                <span class="badge bg-secondary" id="signature-status-badge">Non signé</span>
+                            </div>
+                            
+                            <!-- Wrapper pour le canvas -->
+                            <div class="signature-wrapper">
+                                <div class="signature-placeholder" id="signature-placeholder">
+                                    <div class="text-center">
+                                        <i class="fas fa-signature fa-2x mb-2 text-muted"></i>
+                                        <p class="mb-0">Signez ici</p>
+                                    </div>
+                                </div>
+                                <canvas id="signature-pad"></canvas>
+                            </div>
+                            
+                            <!-- Instructions -->
+                            <div class="signature-instructions">
+                                <h6><i class="fas fa-lightbulb"></i> Comment signer :</h6>
+                                <ul class="mb-0">
+                                    <li><strong>Ordinateur :</strong> Cliquez et glissez avec la souris</li>
+                                    <li><strong>Mobile/Tablette :</strong> Touchez et glissez avec le doigt</li>
+                                    <li>Cliquez sur <strong>"Enregistrer la signature"</strong> une fois terminé</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Actions pour la signature -->
+                            <div class="signature-actions mt-3">
+                                <button type="button" class="btn btn-success btn-signature" onclick="saveSignature()">
+                                    <i class="fas fa-save"></i> Enregistrer
+                                </button>
+                                <button type="button" class="btn btn-warning btn-signature" onclick="clearSignature()">
+                                    <i class="fas fa-eraser"></i> Effacer
+                                </button>
+                                <button type="button" class="btn btn-info btn-signature" onclick="undoSignature()">
+                                    <i class="fas fa-undo"></i> Annuler
+                                </button>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-outline-dark" onclick="changePenColor('black')">
+                                        <i class="fas fa-pen"></i> Noir
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" onclick="changePenColor('blue')">
+                                        <i class="fas fa-pen"></i> Bleu
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Aperçu de la signature -->
+                            <div class="signature-preview mt-3" id="signature-preview">
+                                <p class="text-muted mb-2">Aperçu de la signature</p>
+                                <div id="signature-image-container" class="mb-2">
+                                    <!-- L'image de la signature apparaîtra ici -->
+                                </div>
+                                <div id="signature-status-text" class="signature-status unsigned">
+                                    <i class="fas fa-exclamation-circle"></i> Signature non enregistrée
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Champ caché pour stocker la signature -->
+                        <input type="hidden" id="signature_data" name="signature_data">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Propriétaire -->
+            <div class="form-section">
+                <h3><i class="fas fa-user"></i> Propriétaire</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label required">Nom du propriétaire</label>
+                        <input type="text" name="proprietaire_nom" class="form-control" required placeholder="Jean Martin">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Téléphone</label>
+                        <input type="tel" name="proprietaire_tel" class="form-control" placeholder="06 12 34 56 78">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="proprietaire_email" class="form-control" placeholder="jean.martin@email.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Adresse</label>
+                        <input type="text" name="proprietaire_adresse" class="form-control" placeholder="123 rue de la Paix">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Ville</label>
+                        <input type="text" name="proprietaire_ville" class="form-control" placeholder="Paris">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Code postal</label>
+                        <input type="text" name="proprietaire_cp" class="form-control" placeholder="75000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Vétérinaire -->
+            <div class="form-section">
+                <h3><i class="fas fa-clinic-medical"></i> Cabinet vétérinaire</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Nom du cabinet</label>
+                        <input type="text" name="veterinaire_cabinet" class="form-control" placeholder="Clinique Vétérinaire du Parc">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Téléphone</label>
+                        <input type="tel" name="veterinaire_tel" class="form-control" placeholder="01 23 45 67 89">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Adresse</label>
+                        <input type="text" name="veterinaire_adresse" class="form-control" placeholder="456 avenue des Champs">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="veterinaire_email" class="form-control" placeholder="contact@veto-parc.fr">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bouton de soumission -->
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-download">
+                    <i class="fas fa-file-pdf"></i> GÉNÉRER LE CARNET COMPLET
+                </button>
+                <a href="/" class="btn btn-secondary ms-3">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+                <p class="text-muted mt-2">
+                    <i class="fas fa-info-circle"></i> Le carnet inclura l'attestation signée et le cachet officiel
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bibliothèque Signature Pad -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    
+    <script>
+        // Variables globales
+        let vaccinationCount = 1;
+        let antiparasitaireCount = 1;
+        let signaturePad = null;
+        let isSignatureSaved = false;
+
+        // Initialiser Signature Pad après le chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSignaturePad();
+            
+            // Définir la date d'aujourd'hui comme date par défaut
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.querySelector('input[name="attestation_date"]');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = today;
+            }
+        });
+
+        // Initialiser le pad de signature - VERSION CORRIGÉE
+        function initializeSignaturePad() {
+            console.log("🔍 Initialisation de la zone de signature...");
+            
+            const canvas = document.getElementById('signature-pad');
+            if (!canvas) {
+                console.error("❌ Canvas non trouvé");
+                return;
+            }
+            
+            // Récupérer le placeholder
+            const placeholder = document.getElementById('signature-placeholder');
+            if (!placeholder) {
+                console.error("❌ Placeholder non trouvé");
+            } else {
+                console.log("✅ Placeholder trouvé");
+            }
+            
+            // CORRECTION DES DIMENSIONS
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // INITIALISATION DE SIGNATURE PAD AVEC 3 MÉTHODES POUR CACHER LE PLACEHOLDER
+            signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(255, 255, 255)',
+                penColor: 'rgb(0, 0, 0)',
+                velocityFilterWeight: 0.7,
+                minWidth: 0.5,
+                maxWidth: 2.5,
+                throttle: 10,
+                minPointDistance: 1,
+                
+                // MÉTHODE 1: Utiliser onBegin (si elle fonctionne)
+                onBegin: function() {
+                    console.log("✍️ Événement onBegin déclenché");
+                    hidePlaceholder();
+                    canvas.classList.add('drawing-active');
+                },
+                
+                onEnd: function() {
+                    canvas.classList.remove('drawing-active');
+                    updateSignatureStatus(false);
+                }
+            });
+            
+            // MÉTHODE 2: Ajouter des écouteurs d'événements directement sur le canvas
+            // Ces événements sont plus fiables que onBegin
+            canvas.addEventListener('mousedown', function(e) {
+                console.log("🖱️ Événement mousedown sur canvas");
+                hidePlaceholder();
+            });
+            
+            canvas.addEventListener('touchstart', function(e) {
+                console.log("📱 Événement touchstart sur canvas");
+                hidePlaceholder();
+                e.preventDefault();
+            });
+            
+            // MÉTHODE 3: Surveiller les changements dans Signature Pad
+            // Vérifier périodiquement si l'utilisateur a commencé à dessiner
+            let checkDrawingInterval = setInterval(function() {
+                if (signaturePad && !signaturePad.isEmpty()) {
+                    console.log("🔍 Détection: Signature Pad n'est plus vide");
+                    hidePlaceholder();
+                    clearInterval(checkDrawingInterval);
+                }
+            }, 500); // Vérifier toutes les 500ms
+            
+            // Fonction pour cacher le placeholder
+            function hidePlaceholder() {
+                if (placeholder) {
+                    placeholder.classList.add('hidden');
+                    console.log("✅ Placeholder caché");
+                } else {
+                    console.log("⚠️ Placeholder non trouvé pour le cacher");
+                }
+            }
+            
+            // Fonction pour montrer le placeholder
+            function showPlaceholder() {
+                if (placeholder) {
+                    placeholder.classList.remove('hidden');
+                    console.log("✅ Placeholder affiché");
+                }
+            }
+            
+            // Exposer les fonctions globalement pour les boutons
+            window.hidePlaceholder = hidePlaceholder;
+            window.showPlaceholder = showPlaceholder;
+            
+            console.log("✅ Signature Pad initialisé avec succès");
+            
+            // TEST: Simuler un clic après 2 secondes pour montrer que ça fonctionne
+            setTimeout(function() {
+                console.log("🎯 TEST: Cliquez dans la zone pour cacher le placeholder");
+            }, 2000);
+        }
+
+        // Sauvegarder la signature
+        function saveSignature() {
+            if (!signaturePad) {
+                showAlert('La zone de signature n\'est pas initialisée.', 'danger');
+                return;
+            }
+            
+            if (signaturePad.isEmpty()) {
+                showAlert('Veuillez d\'abord signer dans la zone blanche.', 'warning');
+                return;
+            }
+            
+            try {
+                const dataURL = signaturePad.toDataURL('image/png');
+                document.getElementById('signature_data').value = dataURL;
+                isSignatureSaved = true;
+                
+                showSignaturePreview(dataURL);
+                updateSignatureStatus(true);
+                
+                showAlert('✅ Signature enregistrée avec succès !', 'success');
+                
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde:', error);
+                showAlert('Erreur lors de la sauvegarde.', 'danger');
+            }
+        }
+
+        // Afficher l'aperçu de la signature
+        function showSignaturePreview(dataURL) {
+            const container = document.getElementById('signature-image-container');
+            if (!container) return;
+            
+            const img = document.createElement('img');
+            img.src = dataURL;
+            img.alt = 'Signature';
+            img.style.maxWidth = '200px';
+            img.style.maxHeight = '60px';
+            img.style.borderRadius = '3px';
+            img.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+            
+            container.innerHTML = '';
+            container.appendChild(img);
+        }
+
+        // Mettre à jour le statut de la signature
+        function updateSignatureStatus(saved) {
+            const statusBadge = document.getElementById('signature-status-badge');
+            const statusText = document.getElementById('signature-status-text');
+            
+            if (!statusBadge || !statusText) return;
+            
+            if (saved) {
+                statusBadge.className = 'badge bg-success';
+                statusBadge.innerHTML = '<i class="fas fa-check"></i> Signé';
+                statusText.className = 'signature-status signed';
+                statusText.innerHTML = '<i class="fas fa-check-circle"></i> Signature enregistrée';
+            } else {
+                if (signaturePad.isEmpty()) {
+                    statusBadge.className = 'badge bg-secondary';
+                    statusBadge.innerHTML = '<i class="fas fa-times"></i> Non signé';
+                    statusText.className = 'signature-status unsigned';
+                    statusText.innerHTML = '<i class="fas fa-exclamation-circle"></i> Signature non enregistrée';
+                } else {
+                    statusBadge.className = 'badge bg-warning';
+                    statusBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Non sauvegardé';
+                    statusText.className = 'signature-status unsigned';
+                    statusText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Signature non sauvegardée';
+                }
+            }
+        }
+
+        // Effacer la signature - MODIFIÉ POUR RÉAFFICHER LE PLACEHOLDER
+        function clearSignature() {
+            if (!signaturePad) return;
+            
+            signaturePad.clear();
+            document.getElementById('signature_data').value = '';
+            
+            // Réafficher le placeholder
+            const placeholder = document.getElementById('signature-placeholder');
+            if (placeholder) {
+                placeholder.classList.remove('hidden');
+            }
+            
+            const container = document.getElementById('signature-image-container');
+            if (container) {
+                container.innerHTML = '';
+            }
+            
+            isSignatureSaved = false;
+            updateSignatureStatus(false);
+            showAlert('Signature effacée. Placeholder réaffiché.', 'info');
+        }
+
+        // Annuler le dernier trait
+        function undoSignature() {
+            if (!signaturePad) return;
+            
+            const data = signaturePad.toData();
+            if (data && data.length > 0) {
+                data.pop();
+                signaturePad.fromData(data);
+                updateSignatureStatus(false);
+                showAlert('Dernier trait annulé.', 'info');
+            }
+        }
+
+        // Changer la couleur du stylo
+        function changePenColor(color) {
+            if (!signaturePad) return;
+            
+            if (color === 'black') {
+                signaturePad.penColor = 'rgb(0, 0, 0)';
+            } else if (color === 'blue') {
+                signaturePad.penColor = 'rgb(0, 0, 255)';
+            }
+        }
+
+        // Fonctions pour gestion dynamique des vaccins et antiparasitaires
+        function addVaccination() {
+            const container = document.getElementById('vaccinations-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'vaccination-row';
+            newRow.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Type de vaccin</label>
+                        <input type="text" name="vaccins[${vaccinationCount}][type]" class="form-control" placeholder="Ex: Rage" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="vaccins[${vaccinationCount}][date]" class="form-control" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Rappel</label>
+                        <input type="date" name="vaccins[${vaccinationCount}][rappel]" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Lot n°</label>
+                        <input type="text" name="vaccins[${vaccinationCount}][lot]" class="form-control" placeholder="Numéro de lot">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger btn-remove form-control" onclick="removeVaccination(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newRow);
+            vaccinationCount++;
+        }
+
+        function addAntiparasitaire() {
+            const container = document.getElementById('antiparasitaires-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'antiparasitaire-row';
+            newRow.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Type</label>
+                        <select name="antiparasitaires[${antiparasitaireCount}][type]" class="form-select" required>
+                            <option value="Vermifuge">Vermifuge</option>
+                            <option value="Anti-puces">Anti-puces</option>
+                            <option value="Anti-tiques">Anti-tiques</option>
+                            <option value="Multiples">Multiples</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="antiparasitaires[${antiparasitaireCount}][date]" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Produit</label>
+                        <input type="text" name="antiparasitaires[${antiparasitaireCount}][produit]" class="form-control" placeholder="Ex: Frontline" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Prochaine date</label>
+                        <input type="date" name="antiparasitaires[${antiparasitaireCount}][prochaine_date]" class="form-control">
+                    </div>
+                </div>
+            `;
+            container.appendChild(newRow);
+            antiparasitaireCount++;
+        }
+
+        function removeVaccination(button) {
+            if (document.querySelectorAll('.vaccination-row').length > 1) {
+                button.closest('.vaccination-row').remove();
+            }
+        }
+
+        function removeAntiparasitaire(button) {
+            if (document.querySelectorAll('.antiparasitaire-row').length > 1) {
+                button.closest('.antiparasitaire-row').remove();
+            }
+        }
+
+        // Prévisualisation des images
+        function previewPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function() {
+                const preview = document.getElementById('photo-preview');
+                const img = document.getElementById('preview-img');
+                if (img) img.src = reader.result;
+                if (preview) preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function previewStamp(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function() {
+                const preview = document.getElementById('stamp-preview');
+                if (preview) {
+                    preview.innerHTML = `<img src="${reader.result}" alt="Cachet" style="max-width:100%; max-height:120px;">`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Fonction pour afficher des alertes
+        function showAlert(message, type) {
+            const existingAlerts = document.querySelectorAll('.alert-custom');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const icons = {
+                'success': 'check-circle',
+                'danger': 'exclamation-circle',
+                'warning': 'exclamation-triangle',
+                'info': 'info-circle'
+            };
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-custom alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${icons[type] || 'info-circle'} me-2"></i>
+                    <div>${message}</div>
+                </div>
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Validation du formulaire
+        document.getElementById('animalForm').addEventListener('submit', function(e) {
+            const vetName = document.querySelector('input[name="attestation_veterinaire"]');
+            const signature = document.getElementById('signature_data');
+            
+            if (vetName && vetName.value && (!signature || !signature.value)) {
+                e.preventDefault();
+                showAlert('⚠️ Veuillez enregistrer la signature.', 'warning');
+                return false;
+            }
+            
+            showAlert('⏳ Génération du carnet en cours...', 'info');
+            return true;
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

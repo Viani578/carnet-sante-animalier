@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Carte d'Identification Animale</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 25px;
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .form-section {
+            flex: 1;
+            min-width: 320px;
+            background: linear-gradient(to bottom, #ffffff, #f9fafc);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border: 1px solid #e1e5eb;
+        }
+        
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+            font-size: 1.8rem;
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 320px;
+        }
+        
+        .preview-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e74c3c;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 1rem;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fdfdfd;
+        }
+        
+        input[type="text"]:focus,
+        input[type="tel"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+            background-color: white;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        button {
+            padding: 16px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn-generate {
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-generate:hover {
+            background: linear-gradient(to right, #229954, #27ae60);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+        
+        .btn-haute {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-haute:hover {
+            background: linear-gradient(to right, #2980b9, #2573a7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-basse {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-basse:hover {
+            background: linear-gradient(to right, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-reset {
+            background: linear-gradient(to right, #95a5a6, #7f8c8d);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-reset:hover {
+            background: linear-gradient(to right, #7f8c8d, #6c7b7d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(149, 165, 166, 0.3);
+        }
+        
+        /* Style pour la carte d'identification */
+        .id-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            max-width: 700px;
+            margin: 0 auto;
+            border: 1px solid #e1e5eb;
+            box-sizing: border-box;
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, #2c3e50, #34495e);
+            padding: 15px 20px;
+            color: white;
+        }
+        
+        .company-info {
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .company-name {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #ecf0f1;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .card-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+            color: #2c3e50;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .info-item {
+            margin-bottom: 12px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .info-value {
+            font-size: 0.9rem;
+            padding: 10px;
+            background-color: white;
+            border-radius: 6px;
+            min-height: 25px;
+            border: 1px solid #eaeaea;
+            color: #2d3436;
+        }
+        
+        .login-info {
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #1976d2;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        
+        .login-info p {
+            margin-bottom: 10px;
+        }
+        
+        .detachable-part {
+            border-top: 3px dashed #bdc3c7;
+            padding-top: 20px;
+            margin-top: 25px;
+            background: linear-gradient(to bottom, #f9f9f9, #f0f0f0);
+            border-radius: 0 0 10px 10px;
+            padding-bottom: 15px;
+        }
+        
+        .detachable-note {
+            font-size: 0.85rem;
+            font-style: italic;
+            text-align: center;
+            margin-top: 15px;
+            color: #7f8c8d;
+        }
+        
+        .card-footer {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            padding: 15px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .instructions {
+            background: linear-gradient(to right, #fff8e1, #ffecb3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 5px solid #ffb300;
+        }
+        
+        .instructions p {
+            margin-bottom: 10px;
+            color: #5d4037;
+        }
+        
+        .instructions strong {
+            color: #e65100;
+        }
+        
+        .form-section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+        
+        .form-section-header i {
+            font-size: 1.5rem;
+            color: #3498db;
+        }
+        
+        .preview-container {
+            background: linear-gradient(to bottom, #f8fafc, #eef2f7);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .id-card, .id-card * {
+                visibility: visible;
+            }
+            .id-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100% !important;
+                max-width: none !important;
+                box-shadow: none;
+                border: 1px solid #ccc;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+        
+        /* Animation pour le bouton générer */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .generating {
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* Style pour les messages d'erreur/succès */
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 5px solid #dc3545;
+        }
+        
+        /* Améliorations pour les sélecteurs */
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 40px;
+            appearance: none;
+            cursor: pointer;
+        }
+        
+        /* Style pour la date */
+        input[type="date"] {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .app-container {
+                gap: 20px;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+        
+        /* Ajout d'icônes avec pseudo-éléments */
+        .info-item .info-label::before {
+            content: "✓";
+            color: #27ae60;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        
+        .login-info::before {
+            content: "🔑";
+            font-size: 1.5rem;
+            float: left;
+            margin-right: 15px;
+        }
+
+        /* Styles pour améliorer le PDF */
+        .pdf-optimized {
+            font-size: 12px !important;
+            line-height: 1.4 !important;
+        }
+        
+        /* Styles pour les nouveaux champs */
+        .veterinaire-section {
+            background: linear-gradient(to right, #e8f5e9, #c8e6c9);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .animal-extra-info {
+            background: linear-gradient(to right, #f3e5f5, #e1bee7);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #9c27b0;
+        }
+        
+        .form-subsection {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #ddd;
+        }
+        
+        .form-subsection h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        /* Style pour les boutons PDF */
+        .pdf-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+        
+        .pdf-buttons button {
+            min-width: 180px;
+        }
+        
+        /* Style pour le spinner de chargement */
+        .spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-id-card"></i> Générateur de Carte d'Identification Animale Officielle</h1>
+            <p>Remplissez le formulaire pour créer une carte d'identification professionnelle avec partie haute et partie basse séparables</p>
+        </div>
+        
+        <!-- Message de succès/erreur -->
+        <div id="successMessage" class="message success" style="display: none;">
+            <i class="fas fa-check-circle"></i> Carte générée avec succès ! Le PDF est en cours de téléchargement.
+        </div>
+        
+        <div id="errorMessage" class="message error" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i> Veuillez remplir les champs obligatoires.
+        </div>
+        
+        <div class="app-container">
+            <!-- Formulaire avec action vers la route Flask -->
+            <form id="identificationForm" class="form-section" method="POST" action="/carte-identification/generer">
+                <input type="hidden" id="partie" name="partie" value="complete">
+                
+                <div class="form-section-header">
+                    <i class="fas fa-edit"></i>
+                    <h2>Informations à remplir</h2>
+                </div>
+                
+                <!-- Section Propriétaire -->
+                <div class="form-group">
+                    <label for="ownerName" class="required">Nom et prénom du propriétaire</label>
+                    <input type="text" id="ownerName" name="ownerName" placeholder="Ex: Dupont Jean" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ownerAddress" class="required">Adresse complète du propriétaire</label>
+                    <input type="text" id="ownerAddress" name="ownerAddress" placeholder="Ex: 123 Rue de Paris, 75001 Paris" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone1" class="required">Téléphone 1</label>
+                        <input type="tel" id="phone1" name="phone1" placeholder="Ex: 0123456789" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone2">Téléphone 2 (optionnel)</label>
+                        <input type="tel" id="phone2" name="phone2" placeholder="Ex: 0612345678">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="required">Adresse e-mail</label>
+                    <input type="email" id="email" name="email" placeholder="Ex: exemple@email.fr" required>
+                </div>
+                
+                <!-- Section Vétérinaire traitant -->
+                <div class="veterinaire-section">
+                    <h4><i class="fas fa-user-md"></i> Vétérinaire traitant</h4>
+                    <div class="form-group">
+                        <label for="veterinaireNom" class="required">Nom du vétérinaire traitant</label>
+                        <input type="text" id="veterinaireNom" name="veterinaireNom" placeholder="Ex: Dr. Martin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="veterinaireContact">Contact du vétérinaire</label>
+                        <input type="text" id="veterinaireContact" name="veterinaireContact" placeholder="Ex: 01 23 45 67 89 ou cabinet@vet.fr">
+                    </div>
+                </div>
+                
+                <!-- Section Identification -->
+                <div class="form-subsection">
+                    <h4><i class="fas fa-fingerprint"></i> Identification</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="animalId" class="required">Numéro d'identification</label>
+                            <input type="text" id="animalId" name="animalId" placeholder="Ex: 250269612345678" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="required">Mot de passe</label>
+                            <input type="text" id="password" name="password" placeholder="Ex: abcdef01" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="idDate" class="required">Date d'identification</label>
+                            <input type="date" id="idDate" name="idDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idLocation" class="required">Emplacement de l'identification</label>
+                            <input type="text" id="idLocation" name="idLocation" placeholder="Ex: Gouttière jugulaire gauche" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section Animal -->
+                <div class="animal-extra-info">
+                    <h4><i class="fas fa-paw"></i> Description de l'animal</h4>
+                    
+                    <div class="form-group">
+                        <label for="animalName" class="required">Nom de l'animal</label>
+                        <input type="text" id="animalName" name="animalName" placeholder="Ex: Félix" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="animalEspece" class="required">Espèce</label>
+                            <select id="animalEspece" name="animalEspece" required>
+                                <option value="CHAT">Chat</option>
+                                <option value="CHIEN">Chien</option>
+                                <option value="AUTRE">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="birthDate" class="required">Date de naissance</label>
+                            <input type="date" id="birthDate" name="birthDate" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="breed" class="required">Race</label>
+                            <input type="text" id="breed" name="breed" placeholder="Ex: Européen" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="coat" class="required">Couleur</label>
+                            <input type="text" id="coat" name="coat" placeholder="Ex: Noir et blanc" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hairType" class="required">Type de poil</label>
+                            <select id="hairType" name="hairType" required>
+                                <option value="COURT">Court</option>
+                                <option value="LONG">Long</option>
+                                <option value="MI-LONG">Mi-long</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sex" class="required">Sexe</label>
+                            <select id="sex" name="sex" required>
+                                <option value="MALE">Mâle</option>
+                                <option value="FEMALE">Femelle</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sterilise" class="required">Stérilisé</label>
+                            <select id="sterilise" name="sterilise" required>
+                                <option value="NON">Non</option>
+                                <option value="OUI">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="paysOrigine" class="required">Pays d'origine</label>
+                            <input type="text" id="paysOrigine" name="paysOrigine" placeholder="Ex: FRANCE" value="FRANCE" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Boutons de génération PDF -->
+                <div class="pdf-buttons">
+                    <button type="button" id="generateCompleteBtn" class="btn-generate" onclick="generatePDF('complete')">
+                        <i class="fas fa-file-pdf"></i> Carte Complète
+                    </button>
+                    <button type="button" id="generateHauteBtn" class="btn-haute" onclick="generatePDF('haute')">
+                        <i class="fas fa-file-alt"></i> Partie Haute
+                    </button>
+                    <button type="button" id="generateBasseBtn" class="btn-basse" onclick="generatePDF('basse')">
+                        <i class="fas fa-cut"></i> Partie Basse
+                    </button>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" id="resetBtn" class="btn-reset">
+                        <i class="fas fa-redo"></i> Réinitialiser
+                    </button>
+                </div>
+                
+                <div class="instructions">
+                    <p><strong><i class="fas fa-lightbulb"></i> Instructions :</strong></p>
+                    <p><i class="fas fa-arrow-right"></i> 1. Remplissez tous les champs obligatoires</p>
+                    <p><i class="fas fa-arrow-right"></i> 2. Choisissez le format à télécharger :</p>
+                    <p style="margin-left: 20px;">• <strong>Carte Complète</strong> : Partie haute + partie basse</p>
+                    <p style="margin-left: 20px;">• <strong>Partie Haute</strong> : Pour les modifications (avec identifiants)</p>
+                    <p style="margin-left: 20px;">• <strong>Partie Basse</strong> : À conserver avec vous (carte d'identité)</p>
+                    <p><i class="fas fa-arrow-right"></i> 3. Cliquez sur le bouton correspondant</p>
+                </div>
+            </form>
+            
+            <div class="preview-section">
+                <h2><i class="fas fa-eye"></i> Aperçu de la carte d'identification</h2>
+                <div class="preview-container">
+                    <div id="idCardPreview" class="id-card">
+                        <!-- La carte sera générée ici par JavaScript -->
+                    </div>
+                    <p class="detachable-note">
+                        <i class="fas fa-cut"></i> La partie basse de la carte est conçue pour être détachée et conservée avec vous.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-footer" style="text-align: center; padding: 20px; color: #7f8c8d; font-size: 0.9rem;">
+            <p><i class="fas fa-exclamation-circle"></i> Ce générateur crée des cartes d'identification informatives. Pour une carte officielle, contactez un vétérinaire.</p>
+            <p>© 2023 - Générateur de cartes d'identification animales</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Éléments du formulaire
+            const formInputs = {
+                ownerName: document.getElementById('ownerName'),
+                ownerAddress: document.getElementById('ownerAddress'),
+                phone1: document.getElementById('phone1'),
+                phone2: document.getElementById('phone2'),
+                email: document.getElementById('email'),
+                veterinaireNom: document.getElementById('veterinaireNom'),
+                veterinaireContact: document.getElementById('veterinaireContact'),
+                animalId: document.getElementById('animalId'),
+                password: document.getElementById('password'),
+                animalName: document.getElementById('animalName'),
+                animalEspece: document.getElementById('animalEspece'),
+                birthDate: document.getElementById('birthDate'),
+                breed: document.getElementById('breed'),
+                coat: document.getElementById('coat'),
+                hairType: document.getElementById('hairType'),
+                sex: document.getElementById('sex'),
+                sterilise: document.getElementById('sterilise'),
+                paysOrigine: document.getElementById('paysOrigine'),
+                idDate: document.getElementById('idDate'),
+                idLocation: document.getElementById('idLocation')
+            };
+            
+            // Élément de prévisualisation
+            const cardPreview = document.getElementById('idCardPreview');
+            
+            // Boutons
+            const generateCompleteBtn = document.getElementById('generateCompleteBtn');
+            const generateHauteBtn = document.getElementById('generateHauteBtn');
+            const generateBasseBtn = document.getElementById('generateBasseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            
+            // Messages
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Champs cachés
+            const partieField = document.getElementById('partie');
+            const identificationForm = document.getElementById('identificationForm');
+            
+            // Définir la date du jour comme date d'identification par défaut
+            const today = new Date().toISOString().split('T')[0];
+            formInputs.idDate.value = today;
+            
+            // Définir une date de naissance par défaut (il y a 1 an)
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            formInputs.birthDate.value = oneYearAgo.toISOString().split('T')[0];
+            
+            // Fonction pour formater une date au format français
+            function formatDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('fr-FR');
+            }
+            
+            // Fonction pour afficher un message
+            function showMessage(messageElement, duration = 5000) {
+                messageElement.style.display = 'block';
+                setTimeout(() => {
+                    messageElement.style.display = 'none';
+                }, duration);
+            }
+            
+            // Fonction pour mettre à jour l'aperçu de la carte
+            function updateCardPreview() {
+                // Récupérer les valeurs du formulaire
+                const values = {};
+                for (const key in formInputs) {
+                    values[key] = formInputs[key].value;
+                }
+                
+                // Déterminer l'affichage de l'espèce
+                let especeDisplay = values.animalEspece;
+                if (values.animalEspece === 'CHAT') especeDisplay = 'CHAT';
+                else if (values.animalEspece === 'CHIEN') especeDisplay = 'CHIEN';
+                else if (values.animalEspece === 'AUTRE') especeDisplay = 'AUTRE';
+                
+                // Déterminer l'affichage du sexe
+                let sexDisplay = values.sex === 'MALE' ? 'MÂLE' : 'FEMELLE';
+                
+                // Déterminer l'affichage de la stérilisation
+                let steriliseDisplay = values.sterilise === 'OUI' ? 'OUI' : 'NON';
+                
+                // Construire le HTML de la carte COMPLÈTE
+                cardPreview.innerHTML = `
+                    <div class="card-header">
+                        <div class="company-info">
+                            <div class="company-name">SOCIÉTÉ D'IDENTIFICATION DES CARNIVORES DOMESTIQUES</div>
+                            <div>112-114 Avenue Gabriel Péri - 94246 L'HAY LES ROSES Cedex</div>
+                            <div><strong>0 810 778 778</strong></div>
+                            <div style="margin-top: 10px; font-size: 0.9rem;">${formatDate(new Date().toISOString().split('T')[0])} ${new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <p style="margin-bottom: 15px; font-size: 0.95rem;">
+                            Madame, Monsieur,<br><br>
+                            Nous avons le plaisir de vous adresser la carte d'identification de votre animal suite à l'enregistrement de son identification et de vos coordonnées dans le Fichier National des Carnivores Domestiques (chiens, chats, furets) :
+                        </p>
+                        
+                        <div class="login-info">
+                            <p style="margin-bottom: 10px; font-weight: bold; font-size: 1.1rem;">IDENTIFIANT : ${values.animalId || '250269612345678'}</p>
+                            <p style="font-weight: bold; font-size: 1.1rem;">MOT DE PASSE : ${values.password || 'abcdef01'}</p>
+                            <p style="font-size: 0.9rem; margin-top: 10px;">
+                                <i class="fas fa-globe"></i> Ces informations vous permettent d'effectuer des modifications sur www.i-cad.fr
+                            </p>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="section-title">IDENTIFICATION DE L'ANIMAL</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Nom et prénom du propriétaire</div>
+                                    <div class="info-value">${values.ownerName || 'Nom du propriétaire'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Adresse complète</div>
+                                    <div class="info-value">${values.ownerAddress || 'Adresse du propriétaire'}</div>
+                                </div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">TEL 1</div>
+                                    <div class="info-value">${values.phone1 || '01 23 45 67 89'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">E-MAIL</div>
+                                    <div class="info-value">${values.email || 'email@exemple.fr'}</div>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">VÉTÉRINAIRE TRAITANT</div>
+                                <div class="info-value">${values.veterinaireNom || 'Non spécifié'}${values.veterinaireContact ? ' - ' + values.veterinaireContact : ''}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">TEL 2</div>
+                                <div class="info-value">${values.phone2 || '06 12 34 56 78'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="section-title">IDENTIFICATION DE L'ANIMAL</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">N° :</div>
+                                    <div class="info-value" style="font-weight: bold; color: #2c3e50;">${values.animalId || '250269612345678'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">DATE :</div>
+                                    <div class="info-value">${formatDate(values.idDate) || formatDate(today)}</div>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">EMPLACEMENT :</div>
+                                <div class="info-value">${values.idLocation || 'Gouttière jugulaire gauche'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="section-title">DESCRIPTION DU ${especeDisplay || 'CHAT'}</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">DATE DE NAISSANCE</div>
+                                    <div class="info-value">${formatDate(values.birthDate) || '01/10/2016'}</div>
+                                </div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">RACE</div>
+                                    <div class="info-value">${values.breed || 'Siamois'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Couleur</div>
+                                    <div class="info-value">${values.coat || 'Noir et blanc'}</div>
+                                </div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">POIL</div>
+                                    <div class="info-value">${values.hairType === 'COURT' ? 'Court' : values.hairType === 'LONG' ? 'Long' : 'Mi-long'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">SEXE</div>
+                                    <div class="info-value">${sexDisplay}</div>
+                                </div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">STÉRILISÉ</div>
+                                    <div class="info-value">${steriliseDisplay}</div>
+                                </div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">NOM D'USAGE</div>
+                                    <div class="info-value" style="font-weight: bold; color: #e74c3c;">${values.animalName || 'Félix'}</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">PAYS D'ORIGINE</div>
+                                    <div class="info-value">${values.paysOrigine || 'FRANCE'}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ligne de séparation pointillée -->
+                        <div style="border-top: 2px dashed #bdc3c7; margin: 30px 0; padding-top: 20px;">
+                            <div style="text-align: center; font-weight: bold; color: #2c3e50; margin-bottom: 15px;">
+                                PARTIE BASSE DE LA CARTE D'IDENTIFICATION À DÉTACHER ET À CONSERVER AVEC VOUS
+                            </div>
+                            <div style="font-size: 0.8rem; text-align: center; color: #7f8c8d; margin-bottom: 20px; font-style: italic;">
+                                [ne sert en aucun cas à effectuer de modifications dans notre fichier ou de changement de détenteur]
+                            </div>
+                            
+                            <!-- Partie basse -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; border-radius: 8px; border: 2px solid #bdc3c7;">
+                                <div style="font-size: 1.8rem; font-weight: bold; color: #3498db; background: #f0f7ff; padding: 15px; border-radius: 5px; min-width: 120px; text-align: center;">
+                                    ${values.animalId ? values.animalId.substring(values.animalId.length - 8) : '12345678'}
+                                </div>
+                                <div style="text-align: right; flex-grow: 1; padding-left: 20px;">
+                                    <div style="font-weight: bold; font-size: 1.4rem; color: #2c3e50; margin-bottom: 5px;"><strong>NOM DE L'ANIMAL :</strong> ${values.animalName.toUpperCase() || 'FÉLIX'}</div>
+                                    <div style="font-size: 0.9rem;"><strong>IDENTIFICATION :</strong> ${values.animalId || '250269612345678'}</div>
+                                    <div style="font-size: 0.9rem;"><strong>NOM DU PROPRIETAIRE :</strong> ${values.ownerName || 'Nom du propriétaire'}</div>
+                                    <div style="font-size: 0.9rem; margin-top: 10px;"><strong>NÉ(E) LE :</strong> ${formatDate(values.birthDate) || '01/10/2016'}</div>
+                                    <div style="font-size: 0.9rem;"><strong>RACE :</strong> ${(values.breed || 'EUROPÉEN').toUpperCase()}</div>
+                                    <div style="font-size: 0.9rem;"><strong>COULEUR :</strong> ${(values.coat || 'NOIR ET BLANC').toUpperCase()}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div>Carte générée le ${formatDate(new Date().toISOString().split('T')[0])} - Document informatif</div>
+                    </div>
+                `;
+            }
+            
+            // Mettre à jour l'aperçu quand les valeurs changent
+            for (const key in formInputs) {
+                formInputs[key].addEventListener('input', updateCardPreview);
+                formInputs[key].addEventListener('change', updateCardPreview);
+            }
+            
+            // Initialiser l'aperçu
+            updateCardPreview();
+            
+            // Fonction pour vérifier les champs obligatoires
+            function validateForm() {
+                const requiredFields = [
+                    'ownerName', 'ownerAddress', 'phone1', 'email', 
+                    'animalId', 'password', 'animalName', 'animalEspece',
+                    'birthDate', 'breed', 'coat', 'hairType', 'sex',
+                    'sterilise', 'paysOrigine', 'idDate', 'idLocation',
+                    'veterinaireNom'
+                ];
+                
+                let isValid = true;
+                
+                for (const field of requiredFields) {
+                    if (!formInputs[field].value.trim()) {
+                        // Ajouter une classe d'erreur visuelle
+                        formInputs[field].style.borderColor = '#e74c3c';
+                        formInputs[field].style.boxShadow = '0 0 0 3px rgba(231, 76, 60, 0.2)';
+                        
+                        // Retirer l'effet d'erreur après 3 secondes
+                        setTimeout(() => {
+                            formInputs[field].style.borderColor = '';
+                            formInputs[field].style.boxShadow = '';
+                        }, 3000);
+                        
+                        isValid = false;
+                    }
+                }
+                return isValid;
+            }
+            
+            // Fonction pour générer le PDF via Flask
+            function generatePDF(partie = 'complete') {
+                // Vérifier que les champs requis sont remplis
+                if (!validateForm()) {
+                    showMessage(errorMessage);
+                    return;
+                }
+                
+                // Mettre à jour l'aperçu
+                updateCardPreview();
+                
+                // Désactiver tous les boutons pendant la génération
+                const buttons = [generateCompleteBtn, generateHauteBtn, generateBasseBtn];
+                const originalTexts = buttons.map(btn => btn.innerHTML);
+                
+                buttons.forEach(btn => {
+                    btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Génération...';
+                    btn.disabled = true;
+                });
+                
+                // Mettre à jour le champ caché de la partie
+                partieField.value = partie;
+                
+                // Soumettre le formulaire
+                identificationForm.submit();
+                
+                // Réactiver les boutons après 3 secondes (au cas où la soumission échouerait)
+                setTimeout(() => {
+                    buttons.forEach((btn, index) => {
+                        btn.innerHTML = originalTexts[index];
+                        btn.disabled = false;
+                    });
+                }, 3000);
+            }
+            
+            // Fonction pour réinitialiser le formulaire
+            function resetForm() {
+                if (confirm('Voulez-vous vraiment réinitialiser tous les champs du formulaire ?')) {
+                    for (const key in formInputs) {
+                        if (key === 'idDate') {
+                            formInputs[key].value = today;
+                        } else if (key === 'birthDate') {
+                            const oneYearAgo = new Date();
+                            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+                            formInputs[key].value = oneYearAgo.toISOString().split('T')[0];
+                        } else if (key === 'animalEspece') {
+                            formInputs[key].value = 'CHAT';
+                        } else if (key === 'hairType') {
+                            formInputs[key].value = 'COURT';
+                        } else if (key === 'sex') {
+                            formInputs[key].value = 'MALE';
+                        } else if (key === 'sterilise') {
+                            formInputs[key].value = 'NON';
+                        } else if (key === 'paysOrigine') {
+                            formInputs[key].value = 'FRANCE';
+                        } else {
+                            formInputs[key].value = '';
+                        }
+                    }
+                    updateCardPreview();
+                    
+                    // Petit effet visuel
+                    resetBtn.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        resetBtn.style.transform = '';
+                    }, 200);
+                }
+            }
+            
+            // Événements des boutons
+            generateCompleteBtn.addEventListener('click', () => generatePDF('complete'));
+            generateHauteBtn.addEventListener('click', () => generatePDF('haute'));
+            generateBasseBtn.addEventListener('click', () => generatePDF('basse'));
+            resetBtn.addEventListener('click', resetForm);
+            
+            // Raccourci clavier pour générer le PDF (Ctrl+Enter = complet, Ctrl+H = haute, Ctrl+B = basse)
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        generatePDF('complete');
+                    } else if (event.key === 'h' || event.key === 'H') {
+                        event.preventDefault();
+                        generatePDF('haute');
+                    } else if (event.key === 'b' || event.key === 'B') {
+                        event.preventDefault();
+                        generatePDF('basse');
+                    }
+                }
+            });
+            
+            // Effet visuel sur les champs au focus
+            for (const key in formInputs) {
+                formInputs[key].addEventListener('focus', function() {
+                    this.style.boxShadow = '0 0 0 3px rgba(52, 152, 219, 0.3)';
+                });
+                
+                formInputs[key].addEventListener('blur', function() {
+                    this.style.boxShadow = '';
+                });
+            }
+            
+            // Initialiser quelques valeurs par défaut
+            formInputs.animalId.value = '250269612345678';
+            formInputs.password.value = 'abcdef01';
+            formInputs.animalName.value = 'Félix';
+            formInputs.breed.value = 'Siamois';
+            formInputs.coat.value = 'Noir et blanc';
+            formInputs.idLocation.value = 'Gouttière jugulaire gauche';
+            formInputs.veterinaireNom.value = 'Dr. Martin';
+            formInputs.veterinaireContact.value = '01 23 45 67 89';
+            formInputs.paysOrigine.value = 'FRANCE';
+            
+            updateCardPreview();
+        });
+    </script>
+</body>
+</html>

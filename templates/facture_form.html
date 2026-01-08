@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture de Livraison</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #198754;
+            transition: transform 0.3s;
+        }
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        h3 i {
+            color: #198754;
+        }
+        .section-badge {
+            background: #198754;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .btn-generate {
+            background: linear-gradient(135deg, #198754 0%, #157347 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .btn-generate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(25, 135, 84, 0.3);
+        }
+        .animal-info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        .price-input-group {
+            max-width: 200px;
+        }
+        .table-items {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .table-items thead {
+            background: #198754;
+            color: white;
+        }
+        .alert-custom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="card mb-4" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 25px; border-radius: 15px; text-align: center;">
+            <h2><i class="fas fa-truck"></i> FACTURE DE LIVRAISON À DOMICILE</h2>
+            <p class="mb-0">Service professionnel de transport animalier</p>
+        </div>
+
+        {% if carnet %}
+        <div class="animal-info-card">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4><i class="fas fa-paw"></i> {{ carnet.name }}</h4>
+                    <p class="mb-1"><i class="fas fa-dna"></i> {{ carnet.species }} - {{ carnet.breed }}</p>
+                    <p class="mb-0"><i class="fas fa-user"></i> {{ carnet.proprietaire_nom }}</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h5>Informations de livraison</h5>
+                    <p class="mb-0">{{ carnet.proprietaire_adresse }}</p>
+                    <p class="mb-0">{{ carnet.proprietaire_cp }} {{ carnet.proprietaire_ville }}</p>
+                    <p class="mb-0">Tél: {{ carnet.proprietaire_tel }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <form action="/facture/generer" method="POST" id="factureForm">
+            <input type="hidden" name="carnet_id" value="{{ carnet_id }}">
+            
+            <!-- Informations de facturation -->
+            <div class="form-section">
+                <h3><i class="fas fa-building"></i> Informations de facturation <span class="section-badge">ENTREPRISE</span></h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required">Nom de l'entreprise</label>
+                            <input type="text" name="entreprise_nom" class="form-control" required 
+                                   value="Animal Express Transport" placeholder="Nom de votre entreprise">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">TVA Intracommunautaire</label>
+                            <input type="text" name="tva" class="form-control" 
+                                   value="FR12345678901" placeholder="FRXXXXXXXXX">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Code Postal</label>
+                            <input type="text" name="entreprise_cp" class="form-control" required 
+                                   value="75000">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Ville</label>
+                            <input type="text" name="entreprise_ville" class="form-control" required 
+                                   value="Paris">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required">Code Postal 1</label>
+                            <input type="text" name="entreprise_cp1" class="form-control" required 
+                                   value="21000">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Ville 1</label>
+                            <input type="text" name="entreprise_ville1" class="form-control" required 
+                                   value="Dijon">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Code Postal 2</label>
+                            <input type="text" name="entreprise_cp2" class="form-control" required 
+                                   value="31000">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Ville 2</label>
+                            <input type="text" name="entreprise_ville2" class="form-control" required 
+                                   value="Toulouse">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required">Téléphone</label>
+                            <input type="tel" name="entreprise_tel" class="form-control" required 
+                                   value="01 23 45 67 89">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required">Email</label>
+                            <input type="email" name="entreprise_email" class="form-control" required 
+                                   value="contact@animal-express.fr">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations du client -->
+            <div class="form-section">
+                <h3><i class="fas fa-user"></i> Informations du client <span class="section-badge">CLIENT</span></h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required">Nom complet</label>
+                            <input type="text" name="client_nom" class="form-control" required 
+                                   value="{{ carnet.proprietaire_nom if carnet else '' }}" 
+                                   placeholder="Nom et prénom du client">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Téléphone</label>
+                            <input type="tel" name="client_tel" class="form-control" required 
+                                   value="{{ carnet.proprietaire_tel if carnet else '' }}"
+                                   placeholder="Téléphone du client">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Email</label>
+                            <input type="email" name="client_email" class="form-control" required 
+                                   value="{{ carnet.proprietaire_email if carnet else '' }}"
+                                   placeholder="Email du client">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required">Adresse complète</label>
+                            <textarea name="client_adresse" class="form-control" rows="2" required
+                                      placeholder="Adresse du client pour la livraison">{{ carnet.proprietaire_adresse if carnet else '' }}</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label required">Code Postal</label>
+                                    <input type="text" name="client_cp" class="form-control" required 
+                                           value="{{ carnet.proprietaire_cp if carnet else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label required">Ville</label>
+                                    <input type="text" name="client_ville" class="form-control" required 
+                                           value="{{ carnet.proprietaire_ville if carnet else '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Détails de la livraison -->
+            <div class="form-section">
+                <h3><i class="fas fa-route"></i> Détails de la livraison</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label required">Date de la livraison</label>
+                            <input type="date" name="date_livraison" class="form-control" required 
+                                   value="{{ today }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label required">Heure de prise en charge</label>
+                            <input type="time" name="heure_prise" class="form-control" required 
+                                   value="09:00">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label required">Heure de livraison estimée</label>
+                            <input type="time" name="heure_livraison" class="form-control" required 
+                                   value="11:00">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Espèce de l'animal</label>
+                            <input type="text" name="espece_animal" class="form-control" 
+                                   value="{{ carnet.species if carnet else '' }}"
+                                   placeholder="Ex: Chien, Chat, etc.">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Race de l'animal</label>
+                            <input type="text" name="race_animal" class="form-control" 
+                                   value="{{ carnet.breed if carnet else '' }}"
+                                   placeholder="Ex: Labrador, Berger Allemand, etc.">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Notes spécifiques</label>
+                    <textarea name="notes" class="form-control" rows="3" 
+                              placeholder="Instructions spéciales, particularités de l'animal, accès difficile...">{{ carnet.notes if carnet else '' }}</textarea>
+                </div>
+            </div>
+
+            <!-- Articles et prix -->
+            <div class="form-section">
+                <h3><i class="fas fa-receipt"></i> Articles et tarifs</h3>
+                <div class="table-responsive table-items">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Quantité</th>
+                                <th>Prix unitaire (€)</th>
+                                <th>Total (€)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTable">
+                            <!-- Ligne 1 - Transport de base -->
+                            <tr>
+                                <td>
+                                    <input type="text" name="items[0][description]" class="form-control" 
+                                           value="Transport animalier standard" required>
+                                </td>
+                                <td>
+                                    <input type="number" name="items[0][quantite]" class="form-control" 
+                                           value="1" min="1" required onchange="calculerTotal()">
+                                </td>
+                                <td>
+                                    <div class="input-group price-input-group">
+                                        <input type="number" name="items[0][prix]" class="form-control" 
+                                               value="85.00" min="0" step="0.01" required onchange="calculerTotal()">
+                                        <span class="input-group-text">€</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="total-item" data-index="0">85.00</span> €
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="supprimerItem(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Ligne 2 - Caution cage -->
+                            <tr>
+                                <td>
+                                    <input type="text" name="items[1][description]" class="form-control" 
+                                           value="Caution cage de transport (remboursable)">
+                                </td>
+                                <td>
+                                    <input type="number" name="items[1][quantite]" class="form-control" 
+                                           value="1" min="1" onchange="calculerTotal()">
+                                </td>
+                                <td>
+                                    <div class="input-group price-input-group">
+                                        <input type="number" name="items[1][prix]" class="form-control" 
+                                               value="50.00" min="0" step="0.01" onchange="calculerTotal()">
+                                        <span class="input-group-text">€</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="total-item" data-index="1">50.00</span> €
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="supprimerItem(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-end">
+                                    <button type="button" class="btn btn-secondary" onclick="ajouterItem()">
+                                        <i class="fas fa-plus"></i> Ajouter un article
+                                    </button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6 offset-md-6">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Sous-total HT</th>
+                                <td class="text-end"><span id="sousTotal">135.00</span> €</td>
+                            </tr>
+                            <tr>
+                                <th>TVA (20%)</th>
+                                <td class="text-end"><span id="tvaMontant">27.00</span> €</td>
+                            </tr>
+                            <tr class="table-success">
+                                <th><strong>Total TTC</strong></th>
+                                <td class="text-end"><strong><span id="totalTTC">162.00</span> €</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Conditions de paiement</label>
+                    <select name="conditions_paiement" class="form-select">
+                        <option value="À réception">À réception</option>
+                        <option value="PAYSAFECARD">PAYSAFECARD</option>
+                        <option value="30 jours net">30 jours net</option>
+                        <option value="50% à la commande, 50% à la livraison">50% à la commande, 50% à la livraison</option>
+                        <option value="Carte bancaire">Carte bancaire</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Mentions spéciales</label>
+                    <textarea name="mentions" class="form-control" rows="2">
+Livraison effectuée avec soin et professionnalisme.
+L'animal est assuré pendant le transport.
+                    </textarea>
+                </div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-generate">
+                    <i class="fas fa-file-invoice"></i> GÉNÉRER LA FACTURE PDF
+                </button>
+                <a href="/" class="btn btn-secondary ms-3">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let itemCount = 2;
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="date_livraison"]').value = today;
+
+        function ajouterItem() {
+            const table = document.getElementById('itemsTable');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    <input type="text" name="items[${itemCount}][description]" class="form-control" 
+                           placeholder="Description de l'article" required>
+                </td>
+                <td>
+                    <input type="number" name="items[${itemCount}][quantite]" class="form-control" 
+                           value="1" min="1" required onchange="calculerTotal()">
+                </td>
+                <td>
+                    <div class="input-group price-input-group">
+                        <input type="number" name="items[${itemCount}][prix]" class="form-control" 
+                               value="0.00" min="0" step="0.01" required onchange="calculerTotal()">
+                        <span class="input-group-text">€</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="total-item" data-index="${itemCount}">0.00</span> €
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="supprimerItem(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            table.appendChild(newRow);
+            itemCount++;
+            calculerTotal();
+        }
+
+        function supprimerItem(button) {
+            if (document.querySelectorAll('#itemsTable tr').length > 1) {
+                button.closest('tr').remove();
+                reindexerItems();
+                calculerTotal();
+            }
+        }
+
+        function reindexerItems() {
+            const rows = document.querySelectorAll('#itemsTable tr');
+            itemCount = 0;
+            rows.forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                inputs[0].name = `items[${index}][description]`;
+                inputs[1].name = `items[${index}][quantite]`;
+                inputs[2].name = `items[${index}][prix]`;
+                row.querySelector('.total-item').dataset.index = index;
+                itemCount++;
+            });
+        }
+
+        function calculerTotal() {
+            let sousTotal = 0;
+            
+            document.querySelectorAll('#itemsTable tr').forEach((row, index) => {
+                const quantite = parseFloat(row.querySelector('input[name*="quantite"]').value) || 0;
+                const prix = parseFloat(row.querySelector('input[name*="prix"]').value) || 0;
+                const totalItem = quantite * prix;
+                
+                row.querySelector('.total-item').textContent = totalItem.toFixed(2);
+                sousTotal += totalItem;
+            });
+            
+            const tva = sousTotal * 0.20;
+            const totalTTC = sousTotal + tva;
+            
+            document.getElementById('sousTotal').textContent = sousTotal.toFixed(2);
+            document.getElementById('tvaMontant').textContent = tva.toFixed(2);
+            document.getElementById('totalTTC').textContent = totalTTC.toFixed(2);
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-custom alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <div>${message}</div>
+                </div>
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Calcul initial
+        calculerTotal();
+
+        // Validation du formulaire
+        document.getElementById('factureForm').addEventListener('submit', function(e) {
+            const items = document.querySelectorAll('#itemsTable tr');
+            let hasValidItems = false;
+            
+            items.forEach(row => {
+                const description = row.querySelector('input[name*="description"]').value;
+                const prix = parseFloat(row.querySelector('input[name*="prix"]').value);
+                if (description && prix > 0) {
+                    hasValidItems = true;
+                }
+            });
+            
+            if (!hasValidItems) {
+                e.preventDefault();
+                showAlert('Veuillez ajouter au moins un article avec un prix supérieur à 0€', 'warning');
+                return false;
+            }
+            
+            showAlert('⏳ Génération de la facture en cours...', 'info');
+            return true;
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
