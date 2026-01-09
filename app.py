@@ -2011,7 +2011,7 @@ def generate_attestation_pdf(data, attestation_id):
     intro_text = f"""
     Je soussigné(e), <b>Dr. {data.get('vet_fullname', '[Nom et prénom]')}</b>, 
     vétérinaire diplômé(e) et dûment inscrit(e) à l'Ordre National des Vétérinaires 
-    sous le numéro <b>{data.get('vet_registration', '[Numéro d\'inscription]')}</b>, 
+    sous le numéro <b>{data.get('vet_registration', "[Numéro d'inscription]")}</b>, 
     certifie avoir procédé ce jour à un examen clinique complet de l'animal dont 
     les caractéristiques sont décrites ci-après :
     """
